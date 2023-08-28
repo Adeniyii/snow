@@ -17,19 +17,24 @@ const (
 	INT   = "INT"
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
-	MINUS  = "-"
+	ASSIGN  = "="
+	PLUS    = "+"
+	MINUS   = "-"
+	DIVIDE  = "/"
+	PRODUCT = "*"
 
 	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
+	PERIOD    = "."
 
 	// special characters
-	LPAREN = "("
-	RPAREN = ")"
-	LBRACE = "{"
-	RBRACE = "}"
+	LPAREN  = "("
+	RPAREN  = ")"
+	LBRACE  = "{"
+	RBRACE  = "}"
+	LSQUARE = "["
+	RSQUARE = "]"
 
 	FUNCTION = "FUNCTION"
 	LET      = "LET"

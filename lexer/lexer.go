@@ -33,7 +33,31 @@ func (l *Lexer) NextToken() token.Token {
 	switch l.ch {
 	case '=':
 		tok = newToken(token.ASSIGN, '=')
-	case '0':
+	case '-':
+		tok = newToken(token.MINUS, '-')
+	case '+':
+		tok = newToken(token.PLUS, '+')
+	case '*':
+		tok = newToken(token.PRODUCT, '*')
+	case '/':
+		tok = newToken(token.DIVIDE, '/')
+	case ';':
+		tok = newToken(token.SEMICOLON, ';')
+	case '.':
+		tok = newToken(token.PERIOD, '.')
+	case '{':
+		tok = newToken(token.LBRACE, '{')
+	case '}':
+		tok = newToken(token.RBRACE, '}')
+	case '[':
+		tok = newToken(token.LSQUARE, '[')
+	case ']':
+		tok = newToken(token.RSQUARE, ']')
+	case '(':
+		tok = newToken(token.LPAREN, '(')
+	case ')':
+		tok = newToken(token.RPAREN, ')')
+	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
 	}
