@@ -7,23 +7,55 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := "=+-/*{[(;.)]}"
+	input := `
+let foo = 6;
+let bar = 9;
+
+let add = fn(x, y) {
+  return x + y;
+};
+let result = add(foo, bar);
+  `
 	l := New(input)
 
 	tests := []token.Token{
+		{Literal: "let", Type: token.LET},
+		{Literal: "foo", Type: token.IDENT},
 		{Literal: "=", Type: token.ASSIGN},
-		{Literal: "+", Type: token.PLUS},
-		{Literal: "-", Type: token.MINUS},
-		{Literal: "/", Type: token.DIVIDE},
-		{Literal: "*", Type: token.PRODUCT},
-		{Literal: "{", Type: token.LBRACE},
-		{Literal: "[", Type: token.LSQUARE},
-		{Literal: "(", Type: token.LPAREN},
+		{Literal: "6", Type: token.INT},
 		{Literal: ";", Type: token.SEMICOLON},
-		{Literal: ".", Type: token.PERIOD},
+		{Literal: "let", Type: token.LET},
+		{Literal: "bar", Type: token.IDENT},
+		{Literal: "=", Type: token.ASSIGN},
+		{Literal: "9", Type: token.INT},
+		{Literal: ";", Type: token.SEMICOLON},
+		{Literal: "let", Type: token.LET},
+		{Literal: "add", Type: token.IDENT},
+		{Literal: "=", Type: token.ASSIGN},
+		{Literal: "fn", Type: token.FUNCTION},
+		{Literal: "(", Type: token.LPAREN},
+		{Literal: "x", Type: token.IDENT},
+		{Literal: ",", Type: token.COMMA},
+		{Literal: "y", Type: token.IDENT},
 		{Literal: ")", Type: token.RPAREN},
-		{Literal: "]", Type: token.RSQUARE},
+		{Literal: "{", Type: token.LBRACE},
+		{Literal: "return", Type: token.RETURN},
+		{Literal: "x", Type: token.IDENT},
+		{Literal: "+", Type: token.PLUS},
+		{Literal: "y", Type: token.IDENT},
+		{Literal: ";", Type: token.SEMICOLON},
 		{Literal: "}", Type: token.RBRACE},
+		{Literal: ";", Type: token.SEMICOLON},
+		{Literal: "let", Type: token.LET},
+		{Literal: "result", Type: token.IDENT},
+		{Literal: "=", Type: token.ASSIGN},
+		{Literal: "add", Type: token.IDENT},
+		{Literal: "(", Type: token.LPAREN},
+		{Literal: "foo", Type: token.IDENT},
+		{Literal: ",", Type: token.COMMA},
+		{Literal: "bar", Type: token.IDENT},
+		{Literal: ")", Type: token.RPAREN},
+		{Literal: ";", Type: token.SEMICOLON},
 		{Literal: "", Type: token.EOF},
 	}
 

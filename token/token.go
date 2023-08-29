@@ -10,8 +10,9 @@ type Token struct {
 }
 
 var keywordMap = map[string]TokenType{
-	"let": LET,
-	"fn":  FUNCTION,
+	"let":    LET,
+	"fn":     FUNCTION,
+	"return": RETURN,
 }
 
 // LookupKeyword checks for a keyword match in keywordMap
@@ -51,4 +52,5 @@ const (
 
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	RETURN   = "RETURN"
 )
