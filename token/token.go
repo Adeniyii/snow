@@ -13,6 +13,10 @@ var keywordMap = map[string]TokenType{
 	"let":    LET,
 	"fn":     FUNCTION,
 	"return": RETURN,
+	"if":     IF,
+	"else":   ELSE,
+	"true":   TRUE,
+	"false":  FALSE,
 }
 
 // LookupKeyword checks for a keyword match in keywordMap
@@ -33,15 +37,18 @@ const (
 	IDENT = "IDENT"
 	INT   = "INT"
 
-	ASSIGN  = "="
-	PLUS    = "+"
-	MINUS   = "-"
-	DIVIDE  = "/"
-	PRODUCT = "*"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	SLASH    = "/"
+	ASTERISK = "*"
+	LT       = "<"
+	GT       = ">"
 
 	COMMA     = ","
 	SEMICOLON = ";"
 	PERIOD    = "."
+	BANG      = "!"
 
 	LPAREN  = "("
 	RPAREN  = ")"
@@ -53,4 +60,8 @@ const (
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 	RETURN   = "RETURN"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
 )

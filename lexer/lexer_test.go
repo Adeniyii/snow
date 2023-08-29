@@ -15,6 +15,11 @@ let add = fn(x, y) {
   return x + y;
 };
 let result = add(foo, bar);
+if true {
+  44 > 24;
+} else {
+  24 != 44;
+}
   `
 	l := New(input)
 
@@ -56,6 +61,22 @@ let result = add(foo, bar);
 		{Literal: "bar", Type: token.IDENT},
 		{Literal: ")", Type: token.RPAREN},
 		{Literal: ";", Type: token.SEMICOLON},
+		{Literal: "if", Type: token.IF},
+		{Literal: "true", Type: token.TRUE},
+		{Literal: "{", Type: token.LBRACE},
+		{Literal: "44", Type: token.INT},
+		{Literal: ">", Type: token.GT},
+		{Literal: "24", Type: token.INT},
+		{Literal: ";", Type: token.SEMICOLON},
+		{Literal: "}", Type: token.RBRACE},
+		{Literal: "else", Type: token.ELSE},
+		{Literal: "{", Type: token.LBRACE},
+		{Literal: "24", Type: token.INT},
+		{Literal: "!", Type: token.BANG},
+		{Literal: "=", Type: token.ASSIGN},
+		{Literal: "44", Type: token.INT},
+		{Literal: ";", Type: token.SEMICOLON},
+		{Literal: "}", Type: token.RBRACE},
 		{Literal: "", Type: token.EOF},
 	}
 
