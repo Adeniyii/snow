@@ -9,6 +9,22 @@ type Token struct {
 	Literal string
 }
 
+var keywordMap = map[string]TokenType{
+	"let": LET,
+	"fn":  FUNCTION,
+}
+
+// LookupKeyword checks for a keyword match in keywordMap
+// and return a corresponding token type if a match was found,
+// otherwise it return an IDENT token type.
+func LookupKeyword(literal string) TokenType {
+	if tok, ok := keywordMap[literal]; ok {
+		return tok
+	}
+	return IDENT
+}
+
+// token types
 const (
 	ILLEGAL = "ILLEGAL" // identifies unknown characters
 	EOF     = "EOF"     // signifies the end of file
