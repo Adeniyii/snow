@@ -44,6 +44,12 @@ const (
 	ASTERISK = "*"
 	LT       = "<"
 	GT       = ">"
+	EQ       = "=="
+	NEQ      = "!="
+	GTE      = ">="
+	LTE      = "<="
+	OR       = "||"
+	AND      = "&&"
 
 	COMMA     = ","
 	SEMICOLON = ";"

@@ -15,10 +15,10 @@ let add = fn(x, y) {
   return x + y;
 };
 let result = add(foo, bar);
-if true {
+if !true {
   44 > 24;
 } else {
-  24 != 44;
+  24 != 44 && 24>= 4 || 4<= 20;
 }
   `
 	l := New(input)
@@ -62,6 +62,7 @@ if true {
 		{Literal: ")", Type: token.RPAREN},
 		{Literal: ";", Type: token.SEMICOLON},
 		{Literal: "if", Type: token.IF},
+		{Literal: "!", Type: token.BANG},
 		{Literal: "true", Type: token.TRUE},
 		{Literal: "{", Type: token.LBRACE},
 		{Literal: "44", Type: token.INT},
@@ -72,9 +73,16 @@ if true {
 		{Literal: "else", Type: token.ELSE},
 		{Literal: "{", Type: token.LBRACE},
 		{Literal: "24", Type: token.INT},
-		{Literal: "!", Type: token.BANG},
-		{Literal: "=", Type: token.ASSIGN},
+		{Literal: "!=", Type: token.NEQ},
 		{Literal: "44", Type: token.INT},
+		{Literal: "&&", Type: token.AND},
+		{Literal: "24", Type: token.INT},
+		{Literal: ">=", Type: token.GTE},
+		{Literal: "4", Type: token.INT},
+		{Literal: "||", Type: token.OR},
+		{Literal: "4", Type: token.INT},
+		{Literal: "<=", Type: token.LTE},
+		{Literal: "20", Type: token.INT},
 		{Literal: ";", Type: token.SEMICOLON},
 		{Literal: "}", Type: token.RBRACE},
 		{Literal: "", Type: token.EOF},

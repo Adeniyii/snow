@@ -43,6 +43,34 @@ func (l *Lexer) eatWhiteSpace() {
 	}
 }
 
+// readIdent identifies and returns a string sequence
+func (l *Lexer) readIdent() string {
+	position := l.position
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
+}
+
+// readDigit identifies and returns a number sequence
+func (l *Lexer) readDigit() string {
+	position := l.position
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
+}
+
+// peekChar returns the next character in the input
+// without advancing the position counters.
+func (l *Lexer) peekChar() byte {
+	if l.nextPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.nextPosition]
+	}
+}
+
 // NextToken reads the current character then constructs
 // and outputs a corresponding token.
 func (l *Lexer) NextToken() token.Token {
@@ -52,7 +80,14 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tok = newToken(token.ASSIGN, '=')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.EQ, Literal: literal}
+		} else {
+			tok = newToken(token.ASSIGN, '=')
+		}
 	case '-':
 		tok = newToken(token.MINUS, '-')
 	case '+':
@@ -62,9 +97,23 @@ func (l *Lexer) NextToken() token.Token {
 	case '/':
 		tok = newToken(token.SLASH, '/')
 	case '<':
-		tok = newToken(token.LT, '<')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.LTE, Literal: literal}
+		} else {
+			tok = newToken(token.LT, '<')
+		}
 	case '>':
-		tok = newToken(token.GT, '>')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.GTE, Literal: literal}
+		} else {
+			tok = newToken(token.GT, '>')
+		}
 	case ';':
 		tok = newToken(token.SEMICOLON, ';')
 	case '.':
@@ -72,7 +121,14 @@ func (l *Lexer) NextToken() token.Token {
 	case ',':
 		tok = newToken(token.COMMA, ',')
 	case '!':
-		tok = newToken(token.BANG, '!')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.NEQ, Literal: literal}
+		} else {
+			tok = newToken(token.BANG, '!')
+		}
 	case '{':
 		tok = newToken(token.LBRACE, '{')
 	case '}':
@@ -85,6 +141,26 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LPAREN, '(')
 	case ')':
 		tok = newToken(token.RPAREN, ')')
+	case '&':
+		if l.peekChar() == '&' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.AND, Literal: literal}
+		} else {
+			// TODO: setup unary operations
+			tok = newToken(token.ILLEGAL, '&')
+		}
+	case '|':
+		if l.peekChar() == '|' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.OR, Literal: literal}
+		} else {
+			// TODO: setup unary operations
+			tok = newToken(token.ILLEGAL, '|')
+		}
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -117,22 +193,4 @@ func isLetter(ch byte) bool {
 
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
-}
-
-// readIdent identifies and returns a string sequence
-func (l *Lexer) readIdent() string {
-	position := l.position
-	for isLetter(l.ch) {
-		l.readChar()
-	}
-	return l.input[position:l.position]
-}
-
-// readDigit identifies and returns a number sequence
-func (l *Lexer) readDigit() string {
-	position := l.position
-	for isDigit(l.ch) {
-		l.readChar()
-	}
-	return l.input[position:l.position]
 }
