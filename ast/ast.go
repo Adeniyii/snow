@@ -30,11 +30,20 @@ func (p *Program) TokenLiteral() string {
 
 type LetStatement struct {
 	Token *token.Token
-	Name  Expression
+	Name  *Identifier
 	Value Expression
 }
 
 func (ls *LetStatement) statementNode() {}
 func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
+}
+
+type Identifier struct {
+	Token token.Token
+}
+
+func (i *Identifier) statementNode() {}
+func (i *Identifier) TokenLiteral() string {
+	return i.Token.Literal
 }
