@@ -4,25 +4,33 @@
 package parser
 
 import (
+	"fmt"
+
 	"snow/ast"
 	"snow/lexer"
 	"snow/token"
 )
 
 // The parser structure holds the parser's internal state.
+// currToken holds the token currently being parsed,
+// nextToken holds the next token to be parsed.
 type Parser struct {
 	l         *lexer.Lexer
 	currToken token.Token
 	nextToken token.Token
+	errors    []string
 }
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l}
+	p.errors = []string{}
 	p.readToken()
 	p.readToken()
 	return p
 }
 
+// readToken advances the currToken and nextToken fields of the Parser
+// using the NextToken method of the Lexer.
 func (p *Parser) readToken() {
 	p.currToken = p.nextToken
 	p.nextToken = p.l.NextToken()
@@ -52,7 +60,7 @@ func (p *Parser) parseStatement() ast.Statement {
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
-	stmt := &ast.LetStatement{Token: &p.currToken}
+	stmt := &ast.LetStatement{Token: p.currToken}
 
 	if !p.expectPeek(token.IDENT) {
 		return nil
@@ -76,6 +84,7 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		p.readToken()
 		return true
 	}
+	p.pushError(t)
 	return false
 }
 
@@ -85,4 +94,13 @@ func (p *Parser) nextTokenIs(t token.TokenType) bool {
 
 func (p *Parser) currTokenIs(t token.TokenType) bool {
 	return p.currToken.Type == t
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) pushError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.nextToken.Type)
+	p.errors = append(p.errors, msg)
 }
