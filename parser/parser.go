@@ -5,6 +5,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 
 	"snow/ast"
 	"snow/lexer"
@@ -50,13 +51,31 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 
 	return p
 }
 
 // parseIdentifier is a parsing function for the IDENT token type.
 func (p *Parser) parseIdentifier() ast.Expression {
-	return &ast.Identifier{Token: p.currToken}
+	return &ast.Identifier{Token: p.currToken, Value: p.currToken.Literal}
+}
+
+// parseIdentifier is a parsing function for the INT token type.
+// It converts the token literal to an int type for accurate representation
+// on the Value field.
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.currToken}
+
+	v, err := strconv.ParseInt(p.currToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.currToken.Literal)
+		p.errors = append(p.errors, msg)
+	}
+
+	lit.Value = v
+
+	return lit
 }
 
 // ParseProgram sets up the program structures and kicks off parsing of the available tokens.
@@ -100,7 +119,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 		return nil
 	}
 
-	stmt.Name = &ast.Identifier{Token: p.currToken}
+	stmt.Name = &ast.Identifier{Token: p.currToken, Value: p.currToken.Literal}
 
 	if !p.expectPeek(token.ASSIGN) {
 		return nil

@@ -91,29 +91,37 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
+// Identifier represents an expressionNode for an IDENT token type.
+// It implements the Expression interface.
 type Identifier struct {
 	Token token.Token
+	Value string
 }
 
-func (i *Identifier) expressionNode() {}
-func (i *Identifier) TokenLiteral() string {
-	return i.Token.Literal
+func (i *Identifier) expressionNode()      {}
+func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+func (i *Identifier) String() string       { return i.Token.Literal }
+
+// IntegerLiteral represents an expressionNode for an INT token type.
+// It implements the Expression interface.
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
 }
 
-func (i *Identifier) String() string {
-	return i.TokenLiteral()
-}
+func (il *IntegerLiteral) expressionNode()      {}
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
+// ExpressionStatement represents a Expression statement node
+// with a token and Expression field.
 type ExpressionStatement struct {
 	Token      token.Token
 	Expression Expression
 }
 
-func (ex *ExpressionStatement) statementNode() {}
-func (ex *ExpressionStatement) TokenLiteral() string {
-	return ex.Token.Literal
-}
-
+func (ex *ExpressionStatement) statementNode()       {}
+func (ex *ExpressionStatement) TokenLiteral() string { return ex.Token.Literal }
 func (ex *ExpressionStatement) String() string {
 	if ex.Expression != nil {
 		return ex.Expression.String()
