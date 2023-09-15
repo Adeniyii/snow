@@ -52,30 +52,10 @@ func New(l *lexer.Lexer) *Parser {
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
+	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 
 	return p
-}
-
-// parseIdentifier is a parsing function for the IDENT token type.
-func (p *Parser) parseIdentifier() ast.Expression {
-	return &ast.Identifier{Token: p.currToken, Value: p.currToken.Literal}
-}
-
-// parseIdentifier is a parsing function for the INT token type.
-// It converts the token literal to an int type for accurate representation
-// on the Value field.
-func (p *Parser) parseIntegerLiteral() ast.Expression {
-	lit := &ast.IntegerLiteral{Token: p.currToken}
-
-	v, err := strconv.ParseInt(p.currToken.Literal, 0, 64)
-	if err != nil {
-		msg := fmt.Sprintf("could not parse %q as integer", p.currToken.Literal)
-		p.errors = append(p.errors, msg)
-	}
-
-	lit.Value = v
-
-	return lit
 }
 
 // ParseProgram sets up the program structures and kicks off parsing of the available tokens.
@@ -88,9 +68,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 	for p.currToken.Type != token.EOF {
 		stmt := p.parseStatement()
-		if stmt != nil {
-			program.Statements = append(program.Statements, stmt)
-		}
+		program.Statements = append(program.Statements, stmt)
 		p.readToken()
 	}
 	return program
@@ -107,6 +85,18 @@ func (p *Parser) parseStatement() ast.Statement {
 	default:
 		return p.parseExpressionStatement()
 	}
+}
+
+// parseExpression
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	prefix := p.prefixParseFns[p.currToken.Type]
+	if prefix == nil {
+		p.noPrefixParseFnError(p.currToken.Type)
+		return nil
+	}
+	leftexp := prefix()
+
+	return leftexp
 }
 
 // parseLetStatement handles parsing of let statements.
@@ -147,6 +137,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	return stmt
 }
 
+// ExpressionStatement
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	stmnt := &ast.ExpressionStatement{Token: p.currToken}
 	stmnt.Expression = p.parseExpression(LOWEST)
@@ -155,6 +146,43 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 		p.readToken()
 	}
 	return stmnt
+}
+
+// parseIdentifier is a parsing function for the IDENT token type.
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.currToken, Value: p.currToken.Literal}
+}
+
+// parseIdentifier is a parsing function for the INT token type.
+// It converts the token literal to an int type for accurate representation
+// on the Value field.
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	lit := &ast.IntegerLiteral{Token: p.currToken}
+
+	v, err := strconv.ParseInt(p.currToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.currToken.Literal)
+		p.errors = append(p.errors, msg)
+	}
+
+	lit.Value = v
+
+	return lit
+}
+
+// parsePrefixExpression parses a prefix expression for '!' and '-'.
+// The RHS of the expression is parsed separately.
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	prefix := &ast.PrefixExpression{
+		Token:    p.currToken,
+		Operator: p.currToken.Literal,
+	}
+
+	p.readToken()
+
+	prefix.Right = p.parseExpression(PREFIX)
+
+	return prefix
 }
 
 func (p *Parser) expectPeek(t token.TokenType) bool {
@@ -198,11 +226,7 @@ func (p *Parser) registerInfix(t token.TokenType, fn infixParseFn) {
 	p.infixParseFns[t] = fn
 }
 
-func (p *Parser) parseExpression(precedence int) ast.Expression {
-	prefix := p.prefixParseFns[p.currToken.Type]
-	if prefix == nil {
-		return nil
-	}
-	leftexp := prefix()
-	return leftexp
+func (p *Parser) noPrefixParseFnError(t token.TokenType) {
+	msg := fmt.Sprintf("no prefix parse function for '%s' found", t)
+	p.errors = append(p.errors, msg)
 }
